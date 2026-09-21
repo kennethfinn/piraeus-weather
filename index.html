@@ -13,10 +13,19 @@
   <meta property="og:title" content="Piraeus DidWell Weather Services">
   <meta property="og:description" content="Automatically updated MultiModel weather forecast for Piraeus, Greece, based on nine weather models.">
   <meta property="og:url" content="https://piraeus.didwell.no/">
+  <meta property="og:image" content="https://piraeus.didwell.no/og-piraeus.jpg?v=1.19">
+  <meta property="og:image:url" content="https://piraeus.didwell.no/og-piraeus.jpg?v=1.19">
+  <meta property="og:image:secure_url" content="https://piraeus.didwell.no/og-piraeus.jpg?v=1.19">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Piraeus DidWell Weather Services forecast preview">
 
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Piraeus DidWell Weather Services">
   <meta name="twitter:description" content="Automatically updated MultiModel weather forecast for Piraeus, Greece, based on nine weather models.">
+  <meta name="twitter:image" content="https://piraeus.didwell.no/og-piraeus.jpg?v=1.19">
+  <meta name="twitter:image:alt" content="Piraeus DidWell Weather Services forecast preview">
   <title>Piraeus DidWell Weather Services</title>
   <style>
     :root{
@@ -146,7 +155,7 @@
   <header>
     <div>
       <h1>Piraeus DidWell Weather Services</h1>
-      <div id="locationSub" class="sub">37.94304°N · 23.64684°E · 7 days · v1.18 · updates automatically when the page opens</div>
+      <div id="locationSub" class="sub">37.94304°N · 23.64684°E · 7 days · v1.19 · updates automatically when the page opens</div>
     </div>
     <div class="actions">
       <button id="refreshBtn" type="button">Refresh</button>
@@ -506,7 +515,7 @@
 
     const elevation = Number(data.elevation);
     if(finite(elevation)){
-      $('locationSub').textContent = `37.94304°N · 23.64684°E · ${Math.round(elevation)} m a.s.l. · 7 days · v1.18 · updates automatically when the page opens`;
+      $('locationSub').textContent = `37.94304°N · 23.64684°E · ${Math.round(elevation)} m a.s.l. · 7 days · v1.19 · updates automatically when the page opens`;
     }
 
     const sunrise = data.daily?.sunrise?.[0];
