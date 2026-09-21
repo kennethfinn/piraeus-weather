@@ -13,9 +13,9 @@
   <meta property="og:title" content="Piraeus DidWell Weather Services">
   <meta property="og:description" content="Automatically updated MultiModel weather forecast for Piraeus, Greece, based on nine weather models.">
   <meta property="og:url" content="https://piraeus.didwell.no/">
-  <meta property="og:image" content="https://piraeus.didwell.no/og-piraeus.jpg?v=1.19">
-  <meta property="og:image:url" content="https://piraeus.didwell.no/og-piraeus.jpg?v=1.19">
-  <meta property="og:image:secure_url" content="https://piraeus.didwell.no/og-piraeus.jpg?v=1.19">
+  <meta property="og:image" content="https://piraeus.didwell.no/og-piraeus-v2.jpg?v=1.25">
+  <meta property="og:image:url" content="https://piraeus.didwell.no/og-piraeus-v2.jpg?v=1.25">
+  <meta property="og:image:secure_url" content="https://piraeus.didwell.no/og-piraeus-v2.jpg?v=1.25">
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -24,7 +24,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Piraeus DidWell Weather Services">
   <meta name="twitter:description" content="Automatically updated MultiModel weather forecast for Piraeus, Greece, based on nine weather models.">
-  <meta name="twitter:image" content="https://piraeus.didwell.no/og-piraeus.jpg?v=1.19">
+  <meta name="twitter:image" content="https://piraeus.didwell.no/og-piraeus-v2.jpg?v=1.25">
   <meta name="twitter:image:alt" content="Piraeus DidWell Weather Services forecast preview">
   <title>Piraeus DidWell Weather Services</title>
   <style>
@@ -148,6 +148,50 @@
       .chart-wrap{height:280px}
       .sub{font-size:13px;line-height:1.4}
     }
+
+    /* Shared DidWell weather layout. */
+    body{background:var(--bg);position:relative;isolation:isolate;min-height:100vh}
+    body::before{content:"";position:absolute;z-index:-1;pointer-events:none;top:0;left:0;width:100%;height:clamp(480px,66.667vw,960px);background:linear-gradient(to bottom,rgba(8,17,31,.12) 0%,rgba(8,17,31,.16) 35%,rgba(8,17,31,.6) 72%,var(--bg) 100%),url("background-piraeus-v1.webp") center top / cover no-repeat}
+    .wrap{width:100%;padding:18px 20px 20px;position:relative;margin:auto}
+    header{align-items:flex-start;margin:6px 0 14px}
+    .sub{margin-top:8px;line-height:1.5;max-width:760px}
+    .status{line-height:1.5;margin-bottom:16px}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));align-items:stretch;gap:10px;margin-bottom:20px}
+    .card,.card:nth-child(n+5),.card:nth-child(7){grid-column:auto}
+    .card{min-width:0;padding:14px;display:flex;flex-direction:column;gap:12px;box-shadow:0 6px 20px rgba(0,0,0,.12);background:rgba(16,29,48,.50);border-color:#2b3e57}
+    .temp-value-grid,.metric-grid{gap:12px}
+    .metric{text-align:center}
+    .metric + .metric{border-left:1px solid rgba(159,176,200,.16);padding-left:12px}
+    .label,.temp-value-grid .metric .label,.metric-grid .metric .label{font-size:12px;line-height:1.4;text-transform:none;letter-spacing:0;color:#b5c3d6}
+    .metric > .label{min-height:34px;display:flex;align-items:center;justify-content:center}
+    .value,.temp-value-grid .metric .value,.metric-grid .metric .value{font-size:27px;font-weight:650;letter-spacing:-.035em;line-height:1.2;margin-top:3px;text-align:center;font-variant-numeric:tabular-nums;white-space:normal;overflow-wrap:normal}
+    .unit{font-size:.52em;font-weight:500;color:#aebfd4;letter-spacing:0;white-space:nowrap}
+    .value .reading{white-space:nowrap}
+    #windDirNow{font-size:23px;line-height:1.41}
+    .card > .label{text-align:center}
+    .card > .detail{margin-top:auto;padding-top:10px;border-top:1px solid rgba(159,176,200,.16);text-align:center}
+    .detail{font-size:12px;line-height:1.5;overflow-wrap:normal}
+    .detail-row{display:flex;justify-content:center;align-items:baseline;gap:.35em}
+    .detail-row + .detail-row{margin-top:4px}
+    .detail-row strong{font-weight:500;color:#d4dfec;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .card > #rhNow{margin-top:0}
+    #pressureTrend{font-size:21px;letter-spacing:-.015em;line-height:1.54}
+    .metric > .detail{margin-top:5px;text-wrap:balance}
+    .grid{gap:14px}
+    .panel{padding:18px;border-color:#253951;box-shadow:0 8px 24px rgba(0,0,0,.1)}
+    .panel h2{font-size:18px;margin-bottom:6px;font-weight:650}
+    .panel p{line-height:1.55;max-width:850px;margin-bottom:14px}
+    .section-title{margin-top:20px}
+    button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+    #temperatureCard,#windCard{cursor:pointer;touch-action:manipulation}
+    #temperatureCard:focus-visible,#windCard:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    @media(max-width:640px){
+      .wrap{padding:12px 12px 16px;margin:auto}
+      header{display:flex;flex-wrap:wrap;gap:10px}
+      .sub{font-size:12px}
+      .actions{justify-content:flex-start;margin-top:0}
+      .panel{padding:14px 12px}
+    }
   </style>
 </head>
 <body>
@@ -155,7 +199,7 @@
   <header>
     <div>
       <h1>Piraeus DidWell Weather Services</h1>
-      <div id="locationSub" class="sub">37.94304°N · 23.64684°E · 7 days · v1.19 · updates automatically when the page opens</div>
+      <div id="locationSub" class="sub">37.94304°N · 23.64684°E · 7 days · v1.25 · updates automatically when the page opens</div>
     </div>
     <div class="actions">
       <button id="refreshBtn" type="button">Refresh</button>
@@ -170,7 +214,7 @@
   <div id="errorBox" class="error"></div>
 
   <section class="cards">
-    <div class="card">
+    <div class="card" id="temperatureCard" role="button" tabindex="0" aria-label="Temperature in Celsius. Switch to Fahrenheit" title="Click to switch between °C and °F">
       <div class="temp-value-grid">
         <div class="metric">
           <div class="label">Temperature now</div>
@@ -190,13 +234,13 @@
           <div id="precipNow" class="value">–</div>
         </div>
         <div class="metric">
-          <div class="label">Last 24 hours</div>
-          <div id="precip24h" class="value">–</div>
+          <div class="label">Today so far</div>
+          <div id="precipToday" class="value">–</div>
         </div>
       </div>
       <div id="precipAgreement" class="detail">–</div>
     </div>
-    <div class="card">
+    <div class="card" id="windCard" role="button" tabindex="0" aria-label="Wind speed in metres per second. Switch to kilometres per hour" title="Click to switch between m/s and km/h">
       <div class="metric-grid">
         <div class="metric">
           <div class="label">Wind now</div>
@@ -208,19 +252,6 @@
         </div>
       </div>
       <div id="windSpread" class="detail">–</div>
-    </div>
-    <div class="card">
-      <div class="metric-grid">
-        <div class="metric">
-          <div class="label">Wind now · km/h</div>
-          <div id="windNowKmh" class="value">–</div>
-        </div>
-        <div class="metric">
-          <div class="label">Wind direction</div>
-          <div id="windDirNowKmh" class="value">–</div>
-        </div>
-      </div>
-      <div id="windSpreadKmh" class="detail">–</div>
     </div>
     <div class="card">
       <div class="label">Relative humidity</div>
@@ -269,7 +300,7 @@
     </div>
     <div class="panel">
       <h2>Wind speed</h2>
-      <p>Wind at 10 metres above ground in m/s. The white line is the model average.</p>
+      <p id="windDescription">Wind at 10 metres above ground in m/s. The white line is the model average.</p>
       <div class="chart-wrap"><canvas id="windChart"></canvas></div>
     </div>
     <div class="panel">
@@ -321,6 +352,76 @@
 
   const COLORS = ['#72b7ff','#ff9f6e','#a58cff','#5cd3aa','#ffd166','#f783ac','#9dd46f','#6ed0e0','#f0a7ff'];
   const charts = [];
+  let temperatureUnit = '°C';
+  let currentTemperatures = null;
+  let windUnit = 'm/s';
+  let currentWind = null;
+
+  const temperatureValue = value => Number.isFinite(value)
+    ? (temperatureUnit === '°F' ? value * 9 / 5 + 32 : value)
+    : null;
+
+  function renderTemperatureValues(){
+    if(!currentTemperatures) return;
+    const {now,apparent,low,high,dew} = currentTemperatures;
+    $('tempNow').textContent = `${fmt(temperatureValue(now),1)} ${temperatureUnit}`;
+    $('apparentNow').textContent = `${fmt(temperatureValue(apparent),1)} ${temperatureUnit}`;
+    $('tempSpread').textContent =
+      `today ${fmt(temperatureValue(low),1)}–${fmt(temperatureValue(high),1)} ${temperatureUnit} · dew point ${fmt(temperatureValue(dew),1)} ${temperatureUnit}`;
+  }
+
+  function toggleTemperatureUnit(){
+    temperatureUnit = temperatureUnit === '°C' ? '°F' : '°C';
+    $('temperatureCard').setAttribute('aria-label',temperatureUnit === '°C'
+      ? 'Temperature in Celsius. Switch to Fahrenheit'
+      : 'Temperature in Fahrenheit. Switch to Celsius');
+    if(currentTemperatures){
+      renderTemperatureValues();
+      formatSummaryCards('temperatureCard');
+    }
+    const chart = typeof Chart !== 'undefined' ? Chart.getChart('tempChart') : null;
+    if(chart && chart.celsiusDatasets){
+      chart.data.datasets.forEach((dataset,i) => {
+        dataset.data = chart.celsiusDatasets[i].map(temperatureValue);
+      });
+      chart.options = baseOptions(chart.data.labels,temperatureUnit);
+      chart.update('none');
+    }
+  }
+
+  const windValue = value => Number.isFinite(value)
+    ? (windUnit === 'km/h' ? value * 3.6 : value)
+    : null;
+
+  function renderWindValues(){
+    if(!currentWind) return;
+    const {mean,gust,minToday,maxToday,directionText} = currentWind;
+    $('windNow').textContent = `${fmt(windValue(mean),1)} ${windUnit}`;
+    $('windDirNow').textContent = directionText;
+    $('windSpread').textContent =
+      `gusts ${fmt(windValue(gust),1)} ${windUnit} · today so far ${fmt(windValue(minToday),1)}–${fmt(windValue(maxToday),1)} ${windUnit}`;
+  }
+
+  function toggleWindUnit(){
+    windUnit = windUnit === 'm/s' ? 'km/h' : 'm/s';
+    $('windCard').setAttribute('aria-label',windUnit === 'm/s'
+      ? 'Wind speed in metres per second. Switch to kilometres per hour'
+      : 'Wind speed in kilometres per hour. Switch to metres per second');
+    $('windDescription').textContent =
+      `Wind at 10 metres above ground in ${windUnit}. The white line is the model average.`;
+    if(currentWind){
+      renderWindValues();
+      formatSummaryCards('windCard');
+    }
+    const chart = typeof Chart !== 'undefined' ? Chart.getChart('windChart') : null;
+    if(chart && chart.mpsDatasets){
+      chart.data.datasets.forEach((dataset,i) => {
+        dataset.data = chart.mpsDatasets[i].map(windValue);
+      });
+      chart.options = baseOptions(chart.data.labels,windUnit,0,null);
+      chart.update('none');
+    }
+  }
 
   const $ = id => document.getElementById(id);
   const finite = v => Number.isFinite(v);
@@ -515,7 +616,7 @@
 
     const elevation = Number(data.elevation);
     if(finite(elevation)){
-      $('locationSub').textContent = `37.94304°N · 23.64684°E · ${Math.round(elevation)} m a.s.l. · 7 days · v1.19 · updates automatically when the page opens`;
+      $('locationSub').textContent = `37.94304°N · 23.64684°E · ${Math.round(elevation)} m a.s.l. · 7 days · v1.25 · updates automatically when the page opens`;
     }
 
     const sunrise = data.daily?.sunrise?.[0];
@@ -660,10 +761,12 @@
 
   function tooltipNumber(v,unit){
     if(!finite(v)) return '–';
+    if(unit === '°C' || unit === '°F') return `${v.toFixed(1).replace(',','.')} ${unit}`;
     if(unit === 'degrees') return `${Math.round(v)}°`;
     if(unit === 'mm/h') return `${v.toFixed(2).replace(',','.')} mm/h`;
     if(unit === '%') return `${v.toFixed(0)} %`;
     if(unit === 'm/s') return `${v.toFixed(1).replace(',','.')} m/s`;
+    if(unit === 'km/h') return `${v.toFixed(1).replace(',','.')} km/h`;
     if(unit === 'mbar') return `${v.toFixed(1).replace(',','.')} mbar`;
     return `${v.toFixed(1).replace(',','.')} °C`;
   }
@@ -745,11 +848,24 @@
 
   function makeLine(id,times,models,field,unit,minY=null,maxY=null){
     destroyCanvasChart(id);
+    const rawDatasets = datasetsForLine(models,field,times);
+    const isTemperature = id === 'tempChart';
+    const isWind = id === 'windChart';
+    if(isTemperature) unit = temperatureUnit;
+    if(isWind) unit = windUnit;
+    const datasets = rawDatasets.map(dataset => ({
+      ...dataset,
+      data:isTemperature ? dataset.data.map(temperatureValue)
+        : isWind ? dataset.data.map(windValue)
+        : dataset.data
+    }));
     const chart = new Chart($(id),{
       type:'line',
-      data:{labels:times,datasets:datasetsForLine(models,field,times)},
+      data:{labels:times,datasets},
       options:baseOptions(times,unit,minY,maxY)
     });
+    if(isTemperature) chart.celsiusDatasets = rawDatasets.map(dataset => dataset.data.slice());
+    if(isWind) chart.mpsDatasets = rawDatasets.map(dataset => dataset.data.slice());
     charts.push(chart);
   }
 
@@ -831,15 +947,18 @@
       .map(i => mean(valuesAt(models,'wind',i)))
       .filter(finite);
 
-    $('tempNow').textContent = `${fmt(mean(tv),1)} °C`;
-    $('apparentNow').textContent = `${fmt(mean(av),1)} °C`;
-    $('tempSpread').textContent =
-      `today ${fmt(minv(todayTempMean),1)}–${fmt(maxv(todayTempMean),1)} °C · dew point ${fmt(mean(dewV),1)} °C`;
+    currentTemperatures = {now:mean(tv),apparent:mean(av),low:minv(todayTempMean),high:maxv(todayTempMean),dew:mean(dewV)};
+    renderTemperatureValues();
 
     $('precipNow').textContent = `${fmt(mean(pv),2)} mm/h`;
 
-    let todayPrecip = null;
-    let precip24h = null;
+    const forecastTodayValues = todayIdx
+      .map(i => mean(valuesAt(models,'precip',i)))
+      .filter(finite);
+    const forecastTodayPrecip = forecastTodayValues.length
+      ? forecastTodayValues.reduce((sum,value) => sum + value,0)
+      : null;
+    let precipToday = null;
     let precip30d = null;
     if(recentHistory && Array.isArray(recentHistory.time) && Array.isArray(recentHistory.precipitation)){
       const hist = recentHistory.time.map((t,i) => ({
@@ -849,15 +968,13 @@
 
       const last720 = hist.slice(-720);
       precip30d = last720.length ? last720.reduce((s,x) => s + x.p, 0) : null;
-      const last24 = hist.slice(-24);
-      precip24h = last24.length ? last24.reduce((s,x) => s + x.p, 0) : null;
       const todayRows = hist.filter(x => x.t.startsWith(today));
-      todayPrecip = todayRows.length ? todayRows.reduce((s,x) => s + x.p, 0) : 0;
+      precipToday = todayRows.length ? todayRows.reduce((s,x) => s + x.p, 0) : null;
     }
 
-    $('precip24h').textContent = `${fmt(precip24h,1)} mm`;
+    $('precipToday').textContent = `${fmt(precipToday,1)} mm`;
     $('precipAgreement').textContent =
-      `today so far ${fmt(todayPrecip,1)} mm · last 30 days ${fmt(precip30d,1)} mm`;
+      `forecast today ${fmt(forecastTodayPrecip,1)} mm · last 30 days ${fmt(precip30d,1)} mm`;
 
     const direction = circularMean(dv);
     const directionText = `${cardinal(direction)} ${fmt(direction,0)}°`;
@@ -866,15 +983,8 @@
     const windMinToday = minv(elapsedWindMean);
     const windMaxToday = maxv(elapsedWindMean);
 
-    $('windNow').textContent = `${fmt(windMean,1)} m/s`;
-    $('windDirNow').textContent = directionText;
-    $('windSpread').textContent =
-      `Gusts ${fmt(gustNow,1)} m/s · today so far ${fmt(windMinToday,1)}–${fmt(windMaxToday,1)} m/s`;
-
-    $('windNowKmh').textContent = `${fmt(finite(windMean) ? windMean*3.6 : null,1)} km/h`;
-    $('windDirNowKmh').textContent = directionText;
-    $('windSpreadKmh').textContent =
-      `Gusts ${fmt(finite(gustNow) ? gustNow*3.6 : null,1)} km/h · today so far ${fmt(finite(windMinToday) ? windMinToday*3.6 : null,1)}–${fmt(finite(windMaxToday) ? windMaxToday*3.6 : null,1)} km/h`;
+    currentWind = {mean:windMean,gust:gustNow,minToday:windMinToday,maxToday:windMaxToday,directionText};
+    renderWindValues();
 
     const pressureNow = mean(pressv);
     const past12Idx = Math.max(0, idx - 12);
@@ -908,6 +1018,44 @@
       `today ${fmt(minv(todayRhMean),0)}–${fmt(maxv(todayRhMean),0)} %`;
   }
 
+  function formatSummaryCards(cardId=null){
+    const root = cardId ? $(cardId) : document;
+    root.querySelectorAll('.card .value:not(#pressureTrend)').forEach(el => {
+      const text = el.textContent;
+      const match = text.match(/^(.*?) (°C|°F|mm\/h|mm|m\/s|km\/h|%|mbar)$/);
+      if(!match) return;
+      const reading = document.createElement('span');
+      reading.className = 'reading';
+      reading.append(document.createTextNode(match[1] + ' '));
+      const unit = document.createElement('span');
+      unit.className = 'unit';
+      unit.textContent = match[2];
+      reading.append(unit);
+      el.replaceChildren(reading);
+    });
+    const details = ['tempSpread','precipAgreement','windSpread','daylightDetail'];
+    const humidityDetail = $('rhNow').nextElementSibling;
+    const selectedDetails = cardId === 'temperatureCard' ? [$('tempSpread')]
+      : cardId === 'windCard' ? [$('windSpread')]
+      : [...details.map($),humidityDetail];
+    selectedDetails.forEach(el => {
+      const parts = el.textContent.split(' · ');
+      const rows = parts.map(part => {
+        const match = part.match(/^(forecast today|last 30 days|today so far|today|dew point|gusts|daylight|sunshine) (.*)$/i);
+        if(!match) return document.createTextNode(part);
+        const row = document.createElement('div');
+        row.className = 'detail-row';
+        const label = document.createElement('span');
+        label.textContent = `${match[1].charAt(0).toUpperCase() + match[1].slice(1)}:`;
+        const value = document.createElement('strong');
+        value.textContent = match[2];
+        row.append(label,value);
+        return row;
+      });
+      el.replaceChildren(...rows);
+    });
+  }
+
   let loadInProgress = false;
 
   function finishLoad(){
@@ -938,7 +1086,7 @@
 
     results.forEach((r,i) => {
       if(r.status === 'fulfilled') ok.push(r.value);
-      else failed.push({spec:MODELS[i],error:r.reason?.message || 'ukjent feil'});
+      else failed.push({spec:MODELS[i],error:r.reason?.message || 'unknown error'});
     });
 
     if(ok.length < 2){
@@ -953,6 +1101,7 @@
 
     renderCurrent(times,models,recentHistoryResult.ok ? recentHistoryResult.value : null);
     renderLocalExtras(localExtrasResult.ok ? localExtrasResult.value : null);
+    formatSummaryCards();
     renderModelChips(models,failed,times);
 
     destroyCharts();
@@ -973,9 +1122,25 @@
     const suffix = failed.length ? ` · ${failed.length} model${failed.length === 1 ? '' : 's'} unavailable` : '';
     const historySuffix = recentHistoryResult.ok ? '' : ' · precipitation history unavailable';
     const localSuffix = localExtrasResult.ok ? '' : ' · sun/pressure data unavailable';
-    setStatus(`Updated with ${models.length} weather models${suffix}${historySuffix}${localSuffix}`,'ok');
+    setStatus(`Updated with ${models.length} weather models · Click the temperature or wind card to change units${suffix}${historySuffix}${localSuffix}`,'ok');
     finishLoad();
   }
+
+  $('temperatureCard').addEventListener('click',toggleTemperatureUnit);
+  $('temperatureCard').addEventListener('keydown',event => {
+    if(event.key === 'Enter' || event.key === ' '){
+      event.preventDefault();
+      toggleTemperatureUnit();
+    }
+  });
+
+  $('windCard').addEventListener('click',toggleWindUnit);
+  $('windCard').addEventListener('keydown',event => {
+    if(event.key === 'Enter' || event.key === ' '){
+      event.preventDefault();
+      toggleWindUnit();
+    }
+  });
 
   $('refreshBtn').addEventListener('click', load);
   $('shareBtn').addEventListener('click', async () => {
