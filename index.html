@@ -10,14 +10,14 @@
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_GB">
   <meta property="og:site_name" content="DidWell Weather">
-  <meta property="og:title" content="Piraeus DidWell – Weather Forecast">
+  <meta property="og:title" content="Piraeus DidWell Weather Services">
   <meta property="og:description" content="Automatically updated MultiModel weather forecast for Piraeus, Greece, based on nine weather models.">
   <meta property="og:url" content="https://piraeus.didwell.no/">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Piraeus DidWell – Weather Forecast">
+  <meta name="twitter:title" content="Piraeus DidWell Weather Services">
   <meta name="twitter:description" content="Automatically updated MultiModel weather forecast for Piraeus, Greece, based on nine weather models.">
-  <title>Piraeus DidWell – Weather Forecast</title>
+  <title>Piraeus DidWell Weather Services</title>
   <style>
     :root{
       color-scheme:dark;
@@ -145,8 +145,8 @@
 <div class="wrap">
   <header>
     <div>
-      <h1>Piraeus DidWell</h1>
-      <div id="locationSub" class="sub">37.94304°N · 23.64684°E · 7 days · v1.17 · updates automatically when the page opens</div>
+      <h1>Piraeus DidWell Weather Services</h1>
+      <div id="locationSub" class="sub">37.94304°N · 23.64684°E · 7 days · v1.18 · updates automatically when the page opens</div>
     </div>
     <div class="actions">
       <button id="refreshBtn" type="button">Refresh</button>
@@ -506,7 +506,7 @@
 
     const elevation = Number(data.elevation);
     if(finite(elevation)){
-      $('locationSub').textContent = `37.94304°N · 23.64684°E · ${Math.round(elevation)} m a.s.l. · 7 days · v1.17 · updates automatically when the page opens`;
+      $('locationSub').textContent = `37.94304°N · 23.64684°E · ${Math.round(elevation)} m a.s.l. · 7 days · v1.18 · updates automatically when the page opens`;
     }
 
     const sunrise = data.daily?.sunrise?.[0];
@@ -972,7 +972,7 @@
   $('shareBtn').addEventListener('click', async () => {
     try{
       if(navigator.share){
-        await navigator.share({title:'Piraeus DidWell – Weather Forecast',text:'Updated MultiModel weather forecast for Piraeus, Greece',url:location.href});
+        await navigator.share({title:'Piraeus DidWell Weather Services',text:'Updated MultiModel weather forecast for Piraeus, Greece',url:location.href});
       }else{
         await navigator.clipboard.writeText(location.href);
         const old = $('shareBtn').textContent;
