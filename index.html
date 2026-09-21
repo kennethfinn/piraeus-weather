@@ -185,6 +185,9 @@
     button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
     #temperatureCard,#windCard{cursor:pointer;touch-action:manipulation}
     #temperatureCard:focus-visible,#windCard:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+    .insight{font-size:14px;line-height:1.45;text-align:center;color:#e5edf7}
+    .insight .muted{display:block;color:var(--muted);font-size:12px;margin-top:5px}
+    .risk-low{color:#91edce}.risk-mid{color:#ffe19b}.risk-high{color:#ffb0b8}
     @media(max-width:640px){
       .wrap{padding:12px 12px 16px;margin:auto}
       header{display:flex;flex-wrap:wrap;gap:10px}
@@ -199,7 +202,7 @@
   <header>
     <div>
       <h1>Piraeus DidWell Weather Services</h1>
-      <div id="locationSub" class="sub">37.94304°N · 23.64684°E · 7 days · v1.25 · updates automatically when the page opens</div>
+      <div id="locationSub" class="sub">37.94304°N · 23.64684°E · 7 days · v1.28 · updates automatically when the page opens</div>
     </div>
     <div class="actions">
       <button id="refreshBtn" type="button">Refresh</button>
@@ -214,6 +217,11 @@
   <div id="errorBox" class="error"></div>
 
   <section class="cards">
+    <div class="card">
+      <div class="label">Weather now</div>
+      <div id="weatherNow" class="value">–</div>
+      <div id="weatherDetail" class="detail">–</div>
+    </div>
     <div class="card" id="temperatureCard" role="button" tabindex="0" aria-label="Temperature in Celsius. Switch to Fahrenheit" title="Click to switch between °C and °F">
       <div class="temp-value-grid">
         <div class="metric">
@@ -226,19 +234,6 @@
         </div>
       </div>
       <div id="tempSpread" class="detail">–</div>
-    </div>
-    <div class="card">
-      <div class="metric-grid">
-        <div class="metric">
-          <div class="label">Precipitation now</div>
-          <div id="precipNow" class="value">–</div>
-        </div>
-        <div class="metric">
-          <div class="label">Today so far</div>
-          <div id="precipToday" class="value">–</div>
-        </div>
-      </div>
-      <div id="precipAgreement" class="detail">–</div>
     </div>
     <div class="card" id="windCard" role="button" tabindex="0" aria-label="Wind speed in metres per second. Switch to kilometres per hour" title="Click to switch between m/s and km/h">
       <div class="metric-grid">
@@ -254,22 +249,40 @@
       <div id="windSpread" class="detail">–</div>
     </div>
     <div class="card">
-      <div class="label">Relative humidity</div>
-      <div id="rhNow" class="value">–</div>
-      <div class="detail">model average</div>
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="label">Precipitation now</div>
+          <div id="precipNow" class="value">–</div>
+        </div>
+        <div class="metric">
+          <div class="label">Today so far</div>
+          <div id="precipToday" class="value">–</div>
+        </div>
+      </div>
+      <div id="precipAgreement" class="detail">–</div>
+    </div>
+    <div class="card">
+      <div class="label">Next precipitation</div>
+      <div id="nextPrecip" class="value">–</div>
+      <div id="nextPrecipDetail" class="detail">calculated from available models</div>
     </div>
     <div class="card">
       <div class="metric-grid">
         <div class="metric">
-          <div class="label">Sunrise</div>
-          <div id="sunriseNow" class="value">–</div>
+          <div class="label">Visibility</div>
+          <div id="visibilityNow" class="value">–</div>
         </div>
         <div class="metric">
-          <div class="label">Sunset</div>
-          <div id="sunsetNow" class="value">–</div>
+          <div class="label">UV index · today's maximum</div>
+          <div id="uvToday" class="value">–</div>
         </div>
       </div>
-      <div id="daylightDetail" class="detail">astronomical times for Piraeus</div>
+      <div id="localRisk" class="detail">calculated local indicators</div>
+    </div>
+    <div class="card">
+      <div class="label">Relative humidity</div>
+      <div id="rhNow" class="value">–</div>
+      <div class="detail">model average</div>
     </div>
     <div class="card">
       <div class="metric-grid">
@@ -284,6 +297,19 @@
           <div id="pressureDetail" class="detail">–</div>
         </div>
       </div>
+    </div>
+    <div class="card">
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="label">Sunrise</div>
+          <div id="sunriseNow" class="value">–</div>
+        </div>
+        <div class="metric">
+          <div class="label">Sunset</div>
+          <div id="sunsetNow" class="value">–</div>
+        </div>
+      </div>
+      <div id="daylightDetail" class="detail">astronomical times for Piraeus</div>
     </div>
   </section>
 
@@ -593,8 +619,10 @@
       latitude: LAT,
       longitude: LON,
       timezone: 'Europe/Athens',
-      forecast_days: '1',
-      daily: 'sunrise,sunset,daylight_duration,sunshine_duration'
+      forecast_days: '7',
+      current: 'weather_code,cloud_cover,visibility,uv_index',
+      hourly: 'visibility,temperature_2m,dew_point_2m',
+      daily: 'sunrise,sunset,daylight_duration,sunshine_duration,uv_index_max'
     });
     const res = await fetch(`${API}?${params.toString()}`, {cache:'no-store'});
     if(!res.ok) throw new Error(`local data HTTP ${res.status}`);
@@ -606,17 +634,43 @@
     return iso.split('T')[1].slice(0,5);
   }
 
+  function weatherText(code){
+    const labels = {
+      0:'Clear',1:'Mostly clear',2:'Partly cloudy',3:'Overcast',
+      45:'Fog',48:'Rime fog',51:'Light drizzle',53:'Drizzle',55:'Heavy drizzle',
+      56:'Light freezing drizzle',57:'Freezing drizzle',61:'Light rain',63:'Rain',65:'Heavy rain',
+      66:'Light freezing rain',67:'Freezing rain',71:'Light snow',73:'Snow',75:'Heavy snow',
+      77:'Snow grains',80:'Light rain showers',81:'Rain showers',82:'Heavy rain showers',
+      85:'Light snow showers',86:'Heavy snow showers',95:'Thunderstorm',96:'Thunderstorm with hail',99:'Severe thunderstorm with hail'
+    };
+    return labels[code] || 'Unknown weather';
+  }
+
   function renderLocalExtras(data){
     if(!data){
       $('sunriseNow').textContent = '–';
       $('sunsetNow').textContent = '–';
       $('daylightDetail').textContent = 'sun data unavailable';
+      $('weatherNow').textContent = '–';
+      $('weatherDetail').textContent = 'local data unavailable';
+      $('visibilityNow').textContent = '–';
+      $('uvToday').textContent = '–';
       return;
     }
 
+    const current = data.current || {};
+    $('weatherNow').textContent = weatherText(current.weather_code);
+    $('weatherDetail').textContent = finite(current.cloud_cover)
+      ? `Cloud cover: ${fmt(current.cloud_cover,0)} % · best-match model`
+      : 'best-match model';
+    $('visibilityNow').textContent = finite(current.visibility)
+      ? `${fmt(current.visibility/1000,1)} km`
+      : '–';
+    $('uvToday').textContent = fmt(data.daily?.uv_index_max?.[0],1);
+
     const elevation = Number(data.elevation);
     if(finite(elevation)){
-      $('locationSub').textContent = `37.94304°N · 23.64684°E · ${Math.round(elevation)} m a.s.l. · 7 days · v1.25 · updates automatically when the page opens`;
+      $('locationSub').textContent = `37.94304°N · 23.64684°E · ${Math.round(elevation)} m a.s.l. · 7 days · v1.28 · updates automatically when the page opens`;
     }
 
     const sunrise = data.daily?.sunrise?.[0];
@@ -782,6 +836,7 @@
         legend:{display:false},
         tooltip:{
           displayColors:true,
+          filter: context => context.dataset.label === 'Model average' || context.dataset.label === 'Circular mean',
           boxWidth:11,
           boxHeight:11,
           boxPadding:4,
@@ -947,6 +1002,55 @@
       .map(i => mean(valuesAt(models,'wind',i)))
       .filter(finite);
 
+    const futureIdx = times.map((t,i)=>({t,i})).filter(x => x.t >= key);
+    const firstWet = futureIdx.find(x => {
+      const vals = valuesAt(models,'precip',x.i);
+      return vals.length >= 2 && mean(vals) >= 0.1;
+    });
+    if(firstWet){
+      const vals = valuesAt(models,'precip',firstWet.i);
+      const agreeing = vals.filter(v => v >= 0.2).length;
+      let duration = 0;
+      for(let i=firstWet.i;i<times.length;i++){
+        const hourVals = valuesAt(models,'precip',i);
+        if(hourVals.length < 2 || mean(hourVals) < 0.1) break;
+        duration++;
+      }
+      const tomorrowDate = new Date(today + 'T12:00:00Z');
+      tomorrowDate.setUTCDate(tomorrowDate.getUTCDate()+1);
+      const tomorrow = tomorrowDate.toISOString().slice(0,10);
+      const timeText = firstWet.t.slice(11,16);
+      const dateText = firstWet.t.slice(0,10);
+      const when = dateText === today
+        ? `Today at ${timeText}`
+        : dateText === tomorrow
+          ? `Tomorrow at ${timeText}`
+          : `${new Intl.DateTimeFormat('en-GB',{weekday:'long',timeZone:'UTC'}).format(new Date(dateText+'T12:00:00Z'))} at ${timeText}`;
+      $('nextPrecip').textContent = when;
+      $('nextPrecipDetail').textContent =
+        `${agreeing} of ${vals.length} models forecast at least 0.2 mm/h · estimated duration about ${Math.max(1,duration)} h`;
+    }else{
+      $('nextPrecip').textContent = 'Not forecast';
+      $('nextPrecipDetail').textContent = 'no clear precipitation period in the available forecast';
+    }
+
+    const next24 = futureIdx.slice(0,24).map(x => x.i);
+    let maxFrostShare = 0;
+    next24.forEach(i => {
+      const vals = valuesAt(models,'temp',i);
+      if(vals.length) maxFrostShare = Math.max(maxFrostShare, vals.filter(v=>v<=0).length/vals.length);
+    });
+    const visibilityText = $('visibilityNow').textContent;
+    const visibility = visibilityText && visibilityText !== '–'
+      ? parseFloat(visibilityText.replace(',','.'))*1000 : null;
+    const tempDewSpread = finite(mean(tv)) && finite(mean(dewV)) ? mean(tv)-mean(dewV) : null;
+    const fogRisk = (finite(visibility) && visibility < 1000) ||
+      (finite(tempDewSpread) && tempDewSpread <= 1.5 && finite(mean(wv)) && mean(wv) <= 3);
+    const riskParts = [];
+    if(fogRisk) riskParts.push('calculated fog risk');
+    if(maxFrostShare >= .5) riskParts.push(`frost risk next 24 h (${Math.round(maxFrostShare*100)}% of models)`);
+    $('localRisk').textContent = riskParts.length ? riskParts.join(' · ') : 'no clear fog or frost indication';
+
     currentTemperatures = {now:mean(tv),apparent:mean(av),low:minv(todayTempMean),high:maxv(todayTempMean),dew:mean(dewV)};
     renderTemperatureValues();
 
@@ -1099,8 +1203,8 @@
     const times = aligned.times;
     const models = aligned.models;
 
-    renderCurrent(times,models,recentHistoryResult.ok ? recentHistoryResult.value : null);
     renderLocalExtras(localExtrasResult.ok ? localExtrasResult.value : null);
+    renderCurrent(times,models,recentHistoryResult.ok ? recentHistoryResult.value : null);
     formatSummaryCards();
     renderModelChips(models,failed,times);
 
